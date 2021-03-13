@@ -19,14 +19,8 @@ void main(List<String> args) {
         path.join(Directory.current.path, 'wren', 'Debug', 'wren.dll');
   }
 
-  var bindings = WrenBindings(ffi.DynamicLibrary.open(libraryPath));
-  var configPtr = calloc<WrenConfiguration>();
-  bindings.wrenInitConfiguration(configPtr);
-  var config = configPtr.ref;
-  config.writeFn = ffi.Pointer.fromFunction<WrenWriteFn>(write);
+  var vm = VM(ffi.DynamicLibrary.open(libraryPath),
+      Configuration(writeFn: ffi.Pointer.fromFunction(write)));
 
-  var vm = bindings.wrenNewVM(configPtr);
-
-  var result = bindings.wrenInterpret(vm, 'my_module'.toNativeUtf8().cast(),
-      'System.print(\"I am running in a VM!\")'.toNativeUtf8().cast());
+  vm.interpret('test', 'System.print("Hello, world!")');
 }

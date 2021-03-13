@@ -1,22 +1,4 @@
-A library for Dart developers.
+# wren-dart
+A simple wrapper for the Wren API written in dart
 
-Created from templates made available by Stagehand under a BSD-style
-[license](https://github.com/dart-lang/stagehand/blob/master/LICENSE).
-
-## Usage
-
-A simple usage example:
-
-```dart
-import 'package:wren_dart/wren_dart.dart';
-
-main() {
-  var awesome = new Awesome();
-}
-```
-
-## Features and bugs
-
-Please file feature requests and bugs at the [issue tracker][tracker].
-
-[tracker]: http://example.com/issues/replaceme
+Very WIP, most functions aren't working yet. See the examples for more details

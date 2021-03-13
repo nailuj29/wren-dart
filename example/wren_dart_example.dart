@@ -23,4 +23,6 @@ void main(List<String> args) {
       Configuration(writeFn: ffi.Pointer.fromFunction(write)));
 
   vm.interpret('test', 'System.print("Hello, world!")');
+
+  vm.free();
 }

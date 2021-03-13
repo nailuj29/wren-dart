@@ -29,4 +29,14 @@ class VM {
     return _bindings.wrenInterpret(
         _ptrVm, moduleName.toNativeUtf8().cast(), source.toNativeUtf8().cast());
   }
+
+  /// Frees the memory used by the VM. It shouldn't be used after this
+  void free() {
+    _bindings.wrenFreeVM(_ptrVm);
+  }
+
+  /// Immediately run the garbage collector to free unused memory.
+  void collectGarbage() {
+    _bindings.wrenCollectGarbage(_ptrVm);
+  }
 }

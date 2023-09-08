@@ -1,27 +1,45 @@
 import 'dart:ffi';
+import 'dart:io';
 
 import 'package:ffi/ffi.dart';
 import 'package:wren_dart/src/enums.dart';
 import './generated_bindings.dart';
 
 class Configuration {
-  Pointer<NativeFunction<WrenWriteFn>>? writeFn;
+  Function(VM, String)? writeFn;
 
   Configuration({this.writeFn});
 }
 
 class VM {
+  static VM? instance;
   late Pointer<WrenVM> _ptrVm;
   late WrenBindings _bindings;
 
   VM(DynamicLibrary lib, Configuration config) {
+    if (instance != null) {
+      throw StateError('Only one VM can be created');
+    }
+    instance = this;
+
     _bindings = WrenBindings(lib);
     var wrenConfig = calloc<WrenConfiguration>();
     _bindings.wrenInitConfiguration(wrenConfig);
+    wrenConfig.ref.writeFn = Pointer.fromFunction(_write);
     if (config.writeFn != null) {
-      wrenConfig.ref.writeFn = config.writeFn!;
+      _writeFn = config.writeFn!;
+    } else {
+      _writeFn = (vm, text) {
+        stdout.write(text);
+      };
     }
     _ptrVm = _bindings.wrenNewVM(wrenConfig);
+  }
+
+  static late Function(VM, String) _writeFn;
+
+  static void _write(Pointer<WrenVM> vm, Pointer<Int8> text) {
+    _writeFn(instance!, text.cast<Utf8>().toDartString());
   }
 
   /// Runs [source], a string of Wren source code in a new fiber in this VM in the

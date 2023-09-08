@@ -20,7 +20,7 @@ void main(List<String> args) {
   }
 
   var vm = VM(ffi.DynamicLibrary.open(libraryPath),
-      Configuration(writeFn: ffi.Pointer.fromFunction(write)));
+      Configuration(writeFn: (vm, text) => stdout.write(text)));
 
   vm.interpret('test', 'System.print("Hello, world!")');
 
